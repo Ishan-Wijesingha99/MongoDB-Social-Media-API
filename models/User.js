@@ -11,9 +11,9 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
         unique: true,
-        validate: {
-            // need to validate every email address, regex?
-        }
+        // validate: {
+        //     // need to validate every email address, regex?
+        // }
     },
     thoughts: {
         type: [String]
@@ -22,3 +22,5 @@ const userSchema = new mongoose.Schema({
         type: [String]
     }
 })
+
+module.exports = mongoose.model('User', userSchema)
