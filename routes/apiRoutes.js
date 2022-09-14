@@ -197,7 +197,7 @@ router.post('/thoughts', async (req, res) => {
 
 // PUT routes
 
-// update a user by id
+// update a user by userId
 router.put('/users/:userId', getSingleUser, async (req, res) => {
     if(req.body.username != null) {
         res.user.username = req.body.username
@@ -237,13 +237,38 @@ router.put('/users/:userId', getSingleUser, async (req, res) => {
 
 })
 
+// update a thought by thoughtId
+router.post('/thoughts/thoughtId', getSingleThought, async (req, res) => {
+
+    if(req.body.username != null) {
+        res.thought.username = req.body.username
+    }
+
+    if(req.body.thoughtText != null) {
+        res.thought.thoughtText = req.body.thoughtText
+    }
+
+    try {
+        const updatedThought = await res.thought.save()
+
+        res.status(200).json(updatedThought)
+    } catch (error) {
+        res.status(400).json({ message: error.message })
+    }
+
+})
+
+
+
+
+
 
 
 
 
 // DELETE routes
 
-// delete a user by id
+// delete user by userId
 router.delete('/users/:userId', getSingleUser, async (req, res) => {
     try {
         await res.user.remove()
@@ -276,6 +301,16 @@ router.delete('/users/:userId/friends/:friendsId', getSingleUser, async (req, re
     }
 })
 
+// delete thought by thoughtId
+router.delete('/thoughts/:thoughtId', getSingleThought, async (req, res) => {
+    try {
+        await res.thought.remove()
+
+        res.status(200).json({ message: 'Deleted user' })
+    } catch (error) {
+        res.status(400).json({ message: error.message })
+    }
+})
 
 
 
