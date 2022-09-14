@@ -1,8 +1,9 @@
 const mongoose = require('mongoose')
 
 const reactionSchema = new mongoose.Schema({
-    reactionId: {
-        type: mongoose.SchemaTypes.ObjectId
+    thoughtReactionId: {
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: 'Thought'
         // need to make the default value a NEW objectId, how???
     },
     reactionBody: {

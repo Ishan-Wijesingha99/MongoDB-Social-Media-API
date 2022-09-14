@@ -190,6 +190,50 @@ router.post('/thoughts', async (req, res) => {
     }
 })
 
+// add a reaction to Reaction model and to the particular thought
+router.post('/thoughts/:thoughtId/reactions', getSingleThought, async (req, res) => {
+    // first add to the Reaction model
+    let newReaction
+
+    try {
+        
+        const allUsers = await User.find()
+    
+        allUsers.forEach(async (element, i) => {
+            if(element.username === req.body.username && req.body.reactionBody) {
+                
+                newReaction = new Reaction({
+                    username: req.body.username,
+                    reactionBody: req.body.reactionBody,
+                    thoughtReactionId: res.thought._id.toString()
+                })
+
+                await newReaction.populate("thoughtReactionId")
+
+
+
+                // now we need to add the reaction to the reaction array on the single thought
+                res.thought.reactions.push(newReaction._id.toString())
+
+                await res.thought.save()
+
+
+
+                
+                const returnedReaction = await newReaction.save()
+
+                res.status(200).json(returnedReaction)
+
+            } else {
+                return res.status(400).json({ message: 'username does not exist'})
+            }
+        })
+
+    } catch (error) {
+        res.status(400).json({ message: error.message})
+    }
+
+})
 
 
 
@@ -238,7 +282,7 @@ router.put('/users/:userId', getSingleUser, async (req, res) => {
 })
 
 // update a thought by thoughtId
-router.post('/thoughts/thoughtId', getSingleThought, async (req, res) => {
+router.put('/thoughts/thoughtId', getSingleThought, async (req, res) => {
 
     if(req.body.username != null) {
         res.thought.username = req.body.username
