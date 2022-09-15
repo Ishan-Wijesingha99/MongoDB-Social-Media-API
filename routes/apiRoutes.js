@@ -340,9 +340,7 @@ router.delete('/thoughts/:thoughtId/reactions/:reactionId', getSingleThought, as
     })
 
     try {
-        const currentReaction = await Reaction.findById(req.params.reactionId)
-
-        await currentReaction.remove() 
+        await Reaction.findById(req.params.reactionId).remove()
         
         res.status(200).json({ message: "Reaction deleted" })
     } catch (error) {
