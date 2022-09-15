@@ -154,8 +154,6 @@ router.post('/thoughts', async (req, res) => {
 
         allUsers.forEach(async (element, i) => {
 
-            console.log(element.username, '---', req.body.username)
-
             if(element.username === req.body.username) {
 
                 if(req.body.thoughtText) {
