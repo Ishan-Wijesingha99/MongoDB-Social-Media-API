@@ -12,4 +12,4 @@ There is also a POST route that can add a friend to the friends property of each
 There is also a POST route that can add a reaction to the reactions property of each thought, as well as a DELETE route that can delete a reaction from this reactions property.
 
 ## Link to Walkthrough Video
-https://screenrec.com/share/EjBcMkYwsN
+https://screenrec.com/share/RjtesbEhWS
