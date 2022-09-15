@@ -1,9 +1,12 @@
+// set up express router
 const express = require('express')
 const router = express.Router()
 
+// import relevant models
 const Reaction = require('../models/Reaction')
 const Thought = require('../models/Thought')
 const User = require('../models/User')
+
 
 
 // middleware to find a user by userId
@@ -11,7 +14,6 @@ const getSingleUser = async function(req, res, next) {
     let singleUser
 
     try {
-
         singleUser = await User.findById(req.params.userId) 
 
         if(singleUser === null) {
@@ -42,12 +44,7 @@ const getSingleThought = async function(req, res, next) {
 
     res.thought = singleThought
     next()
-
 }
-
-
-
-
 
 
 
@@ -84,8 +81,6 @@ router.get('/thoughts', async (req, res) => {
 router.get('/thoughts/:thoughtId', getSingleThought, async (req, res) => {
     res.status(200).json(res.thought)
 })
-
-
 
 
 
@@ -155,7 +150,6 @@ router.post('/thoughts', async (req, res) => {
     let newThought
 
     try {
-        // first we have to check if the username does in fact exist
         const allUsers = await User.find()
 
         allUsers.forEach(async (element, i) => {
@@ -173,14 +167,12 @@ router.post('/thoughts', async (req, res) => {
         
                 const returnedThought = await newThought.save()
 
-                // now you need to add the thought to the associated user
                 const currentUser = await User.findById(element._id.toString())
                 currentUser.thoughts.push(returnedThought)
 
                 await currentUser.save()
         
                 return res.status(200).json(returnedThought)
-
             }
 
         })
@@ -192,11 +184,9 @@ router.post('/thoughts', async (req, res) => {
 
 // add a reaction to Reaction model and to the particular thought
 router.post('/thoughts/:thoughtId/reactions', getSingleThought, async (req, res) => {
-    // first add to the Reaction model
     let newReaction
 
     try {
-        
         const allUsers = await User.find()
     
         allUsers.forEach(async (element, i) => {
@@ -210,20 +200,13 @@ router.post('/thoughts/:thoughtId/reactions', getSingleThought, async (req, res)
 
                 await newReaction.populate("thoughtReactionId")
 
-
-
-                // now we need to add the reaction to the reaction array on the single thought
                 res.thought.reactions.push(newReaction._id.toString())
 
                 await res.thought.save()
 
-
-
-
                 const returnedReaction = await newReaction.save()
 
                 res.status(200).json(returnedReaction)
-
             }
 
         })
@@ -233,8 +216,6 @@ router.post('/thoughts/:thoughtId/reactions', getSingleThought, async (req, res)
     }
 
 })
-
-
 
 
 
@@ -303,12 +284,6 @@ router.put('/thoughts/:thoughtId', getSingleThought, async (req, res) => {
 
 
 
-
-
-
-
-
-
 // DELETE routes
 
 // delete user by userId
@@ -355,18 +330,18 @@ router.delete('/thoughts/:thoughtId', getSingleThought, async (req, res) => {
     }
 })
 
-// delete reaction from Reaction model and from reactions array of that particular
+// delete reaction from Reaction model and from reactions array of that single thought
 router.delete('/thoughts/:thoughtId/reactions/:reactionId', getSingleThought, async (req, res) => {
 
-    // first delete the reaction from the reactions array in the particular single thought
-    res.thought.reactions.forEach((element, i) => {
+    res.thought.reactions.forEach(async (element, i) => {
         if(element === req.params.reactionId) {
             res.thought.reactions.splice(i, 1)
+
+            await res.thought.save()
         }
     })
 
     try {
-        // then delete the reaction from the Reaction model
         const currentReaction = await Reaction.findById(req.params.reactionId)
 
         await currentReaction.remove() 
@@ -377,10 +352,6 @@ router.delete('/thoughts/:thoughtId/reactions/:reactionId', getSingleThought, as
     }
 
 })
-
-
-
-
 
 
 

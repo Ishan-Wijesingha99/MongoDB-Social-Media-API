@@ -1,5 +1,7 @@
+// require mongoose module
 const mongoose = require('mongoose')
 
+// create userSchema
 const userSchema = new mongoose.Schema({
     username: {
         type: String,
@@ -11,9 +13,6 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
         unique: true,
-        // validate: {
-        //     // need to validate every email address, regex?
-        // }
     },
     thoughts: {
         type: [String]
@@ -23,4 +22,5 @@ const userSchema = new mongoose.Schema({
     }
 })
 
+// export userSchema as a model
 module.exports = mongoose.model('User', userSchema)

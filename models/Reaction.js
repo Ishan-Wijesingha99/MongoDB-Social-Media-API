@@ -1,10 +1,11 @@
+// require mongoose module
 const mongoose = require('mongoose')
 
+// create reactionSchema
 const reactionSchema = new mongoose.Schema({
     thoughtReactionId: {
         type: mongoose.SchemaTypes.ObjectId,
         ref: 'Thought'
-        // need to make the default value a NEW objectId, how???
     },
     reactionBody: {
         type: String,
@@ -18,8 +19,8 @@ const reactionSchema = new mongoose.Schema({
     createdAt: {
         type: Date,
         default: Date.now()
-        // getter method to format the timestamp on query???
     }
 })
 
+// export reactionSchema as a model
 module.exports = mongoose.model('Reaction', reactionSchema)

@@ -1,5 +1,7 @@
+// require mongoose module
 const mongoose = require('mongoose')
 
+// create thoughtSchema
 const thoughtSchema = new mongoose.Schema({
     thoughtText: {
         type: String,
@@ -10,7 +12,6 @@ const thoughtSchema = new mongoose.Schema({
     createdAt: {
         type: Date,
         default: Date.now(),
-        // getter method to format the timestamp on query???
     },
     username: {
         type: String,
@@ -21,4 +22,5 @@ const thoughtSchema = new mongoose.Schema({
     }
 })
 
+// export thoughtSchema as a model
 module.exports = mongoose.model('Thought', thoughtSchema)
