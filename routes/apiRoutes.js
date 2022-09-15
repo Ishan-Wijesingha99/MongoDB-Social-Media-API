@@ -157,8 +157,10 @@ router.post('/thoughts', async (req, res) => {
     try {
         // first we have to check if the username does in fact exist
         const allUsers = await User.find()
-        
+
         allUsers.forEach(async (element, i) => {
+
+            console.log(element.username, '---', req.body.username)
 
             if(element.username === req.body.username) {
 
@@ -177,10 +179,8 @@ router.post('/thoughts', async (req, res) => {
 
                 await currentUser.save()
         
-                res.status(200).json(returnedThought)
+                return res.status(200).json(returnedThought)
 
-            } else {
-                return res.status(400).json({ message: 'username does not exist'})
             }
 
         })
@@ -219,14 +219,13 @@ router.post('/thoughts/:thoughtId/reactions', getSingleThought, async (req, res)
 
 
 
-                
+
                 const returnedReaction = await newReaction.save()
 
                 res.status(200).json(returnedReaction)
 
-            } else {
-                return res.status(400).json({ message: 'username does not exist'})
             }
+
         })
 
     } catch (error) {
@@ -282,7 +281,7 @@ router.put('/users/:userId', getSingleUser, async (req, res) => {
 })
 
 // update a thought by thoughtId
-router.put('/thoughts/thoughtId', getSingleThought, async (req, res) => {
+router.put('/thoughts/:thoughtId', getSingleThought, async (req, res) => {
 
     if(req.body.username != null) {
         res.thought.username = req.body.username
@@ -350,11 +349,36 @@ router.delete('/thoughts/:thoughtId', getSingleThought, async (req, res) => {
     try {
         await res.thought.remove()
 
-        res.status(200).json({ message: 'Deleted user' })
+        res.status(200).json({ message: 'Deleted thought' })
     } catch (error) {
         res.status(400).json({ message: error.message })
     }
 })
+
+// delete reaction from Reaction model and from reactions array of that particular
+router.delete('/thoughts/:thoughtId/reactions/:reactionId', getSingleThought, async (req, res) => {
+
+    // first delete the reaction from the reactions array in the particular single thought
+    res.thought.reactions.forEach((element, i) => {
+        if(element === req.params.reactionId) {
+            res.thought.reactions.splice(i, 1)
+        }
+    })
+
+    try {
+        // then delete the reaction from the Reaction model
+        const currentReaction = await Reaction.findById(req.params.reactionId)
+
+        await currentReaction.remove() 
+        
+        res.status(200).json({ message: "Reaction deleted" })
+    } catch (error) {
+        res.status(400).json({ message: error.message })
+    }
+
+})
+
+
 
 
 
